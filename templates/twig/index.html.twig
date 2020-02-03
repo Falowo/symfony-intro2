@@ -1,0 +1,186 @@
+{# le template hérite de base.html.twig = il reprend son contenu #}
+{% extends 'base.html.twig' %}
+
+{% block title %}
+    {{ parent() }} - Twig
+{% endblock %}
+
+{# surcharge du block body défini dans base.html.twig#}
+{% block body %}
+    {# set défini une variable #}
+    {% set test = 'une variable de test' %}
+
+    {# affiche la variable dans une paragraphe #}
+    <p>{{ test }}</p>
+
+    <p>{{ test ~ ' !' }}</p>
+
+    {# equivalent d'un var_dump() mais ne s'affiche qu'en environnement dev #}
+    {{ dump(test) }}
+
+    {% if test != '' %}
+        <p>test n'est pas un string vide</p>
+    {% else %}
+        <p>test est un string vide</p>
+    {% endif %}
+
+    {%  set vrai = true %}
+    {% set faux = false %}
+
+    {# not en toutes lettres #}
+    {% if not faux %}
+        <p>faux n'est pas vrai</p>
+    {% endif %}
+
+    {% if vrai and not faux %}
+        <p>vrai est vrai et n'est pas faux</p>
+    {% endif %}
+
+    {% set tableau = [1, 2, 3, 4] %}
+
+    {# foreach ($tableau as $nb) #}
+    {% for nb in tableau  %}
+        {{ nb }}<br>
+    {% endfor %}
+
+    {#pour accecer à la valeur à l'indice 1 :#}
+    <p>{{ tableau[1] }}</p>
+    <p>{{ tableau.1 }}</p>
+
+    {# for ($i=0; $i<=10; $i++) #}
+    {% for i in 0..10  %}
+        {{ i }}<br>
+    {% endfor %}
+
+    {# for ($i=00; $i>=0; $i--) #}
+    {% for i in 10..0  %}
+        {{ i }}<br>
+    {% endfor %}
+
+    {# for ($i=0; $i<=10; $i +=$i+2) #}
+    {% for i in range(0, 10, 2) %}
+        {{ i }}<br>
+    {% endfor %}
+
+    {#
+    tableau associatif :
+    $assoc = ['nom' => 'Anest', 'prenom' => 'Julien']
+    #}
+    {%  set assoc = {nom: "Anest", prenom: "Julien"} %}
+
+    {# pour acceder a la valeur a la clef nom : #}
+    <p>{{  assoc['nom'] }}</p>
+    {# ou : #}
+    <p>{{ assoc.nom }}</p>
+
+    {# foreach ($assoc as $key=> $value) #}
+    {% for key, value in assoc  %}
+        {{ key }} : {{ value }}<br>
+    {% endfor %}
+
+    {% set vide = [] %}
+
+    {# on rentre dans le reste d'un for si le tableau est vide #}
+    {% for value in vide  %}
+        {{ value }}<br>
+    {% else %}
+        <p>le tableau est vide</p>
+    {% endfor %}
+
+    {% for nb in tableau %}
+        Tour de boucle (index 1) : {{ loop.index }}<br>
+        Tour de boucle (index 0) : {{ loop.index0 }}<br>
+        {% if loop.first %}
+              1er tour de boucle<br>
+        {% endif %}
+        {% if loop.last %}
+            dernier tour de boucle<br>
+        {% endif %}
+        {% if loop.index == 3 %}
+            troisieme tour de boucle<br>
+        {% endif %}
+        {{ nb }}<br>
+    {% endfor %}
+
+    {# TESTS AVEC is ET is not #}
+
+    {# if (isset($test)) #}
+    {% if test is defined %}
+        <p>la variable test existe</p>
+    {% endif %}
+
+    {% if test is not empty %}
+        <p>la variable test n'est pas vide</p>
+    {% endif %}
+
+    {% set dix = 10 %}
+
+    {# if ($dix % 5 == 0) #}
+    {% if dix is divisible by(5) %}
+        <p>{{ dix }} est divisible par 5</p>
+    {% endif %}
+
+    {% if dix is even %}
+        <p>{{ dix }} est pas pair</p>
+    {% endif %}
+
+    {% if dix is not odd %}
+        <p>{{ dix }} n'est pas impair</p>
+    {% endif %}
+
+    {# if (in_array(2, $tableau) #}
+    {% if 2 in tableau %}
+        <p>le tableau contient la valeur 2</p>
+    {% endif %}
+
+    {% if 'Julien' in assoc %}
+        <p>Assoc contient 'Julien'</p>
+    {% endif %}
+
+    {# filtres avec pipe | #}
+
+    {# strtoupper($test) #}
+    <p>{{  test|upper }}</p>
+
+    {# valeur par defaut quand la variable est vide (empty) #}
+    <p>{{ var|default('la variable est vide') }}</p>
+
+    {# on peut cumuler les filtre #}
+    <p>{{ var|default('la variable est vide')|upper }}</p>
+
+    {# first et last pour recuperer les 1st et last elemt d'un array #}
+    <p>assoc|last</p>
+
+    {# formatage de date #}
+    <p>{{ '2020-02-03'|date('d/m/Y') }}</p>
+    <p>{{ demain|date('d/m/Y H:i:s') }}</p>
+
+    {#
+    Identique a l'appel a la methode format() de DAteTime
+    L'appel d'une méthode d'un objet se fait avec un point
+    #}
+    <p>{{ demain.format('d/m/Y H:i') }}</p>
+
+    {% set html = '<p>Un paragraphe</p>' %}
+
+    {#
+    par défault le HTML est échappé en entités HTML
+    soit &lt; pour < et & &gt; pour >
+    #}
+    {{ html }}
+
+    {# pour que le html ne soit pas échappé : #}
+    {{ html|raw }}
+
+
+    {# chemin a partir du repertoir template #}
+    {% include 'twig/inclus.html.twig' %}
+
+    {# le fichier n'a pa acces à la variable test#}
+    {% include 'twig/inclus.html.twig' only %}
+
+    {% include 'twig/inclus.html.twig' with {foo: "BAR"} %}
+
+    {% include 'twig/inclus.html.twig' with {foo: "BAR"} only %}
+
+{% endblock %}

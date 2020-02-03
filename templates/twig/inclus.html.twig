@@ -1,0 +1,13 @@
+<p>contenu de inclus.html.twig</p>
+
+{%  if test is defined %}
+<p>j'ai accès a la variable test qui vaut : "{{ test }}"</p>
+{% else %}
+<p>je n'ai pas acces a a la var test</p>
+{% endif %}
+
+{%  if foo is defined %}
+<p>j'ai accès a la variable foo qui vaut : "{{ foo }}"</p>
+{% else %}
+<p>je n'ai pas acces a a la var foo</p>
+{% endif %}
